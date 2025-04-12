@@ -1,0 +1,25 @@
+{
+  "name": "journo-crawler",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "This is a web scraper designed to extract structured article data from news websites.",
+  "dependencies": {
+    "crawlee": "3.0.0",
+    "mongodb": "6.15.0",
+    "playwright": "1.51.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.4.0",
+    "typescript": "~5.8.0"
+  },
+  "scripts": {
+    "start": "npm run start:dev",
+    "start:prod": "node dist/main.js",
+    "start:dev": "tsx --env-file=.env src/main.ts",
+    "build": "tsc",
+    "test": "echo \"Error: oops, the actor has no tests yet, sad!\" && exit 1",
+    "postinstall": "npx crawlee install-playwright-browsers"
+  },
+  "author": "Hendrik Wichern"
+}
