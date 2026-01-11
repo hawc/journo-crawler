@@ -10,9 +10,9 @@
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "@vercel/node": "^3.0.0",
-    "tsx": "^4.4.0",
-    "typescript": "~5.8.0"
+    "@vercel/node": "^5.5.16",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   },
   "scripts": {
     "start": "npm run start:dev",
