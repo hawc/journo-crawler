@@ -1,4 +1,4 @@
-import { PlaywrightCrawler } from 'crawlee';
+import { Configuration, PlaywrightCrawler } from 'crawlee';
 import { chromium } from 'playwright';
 
 import { closeClient, getConfigs, insertData } from "./mongoClient.js";
@@ -8,6 +8,14 @@ export async function runCrawler() {
   // Use browserless when configured (assumed when API is used on Vercel)
   const browserlessUrl = process.env.BROWSERLESS_URL;
   const browserlessToken = process.env.BROWSERLESS_TOKEN;
+
+  // Configure storage to use /tmp in serverless environments (Vercel)
+  // This prevents ENOENT errors when trying to create storage directories
+  if (browserlessUrl) {
+    Configuration.getGlobalConfig().set('storageClientOptions', {
+      localDataDirectory: '/tmp',
+    });
+  }
 
   const crawlerOptions: any = {
     requestHandler: router,
