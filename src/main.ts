@@ -1,4 +1,4 @@
-import { Configuration, PlaywrightCrawler } from 'crawlee';
+import { Configuration, PlaywrightCrawler, PlaywrightCrawlerOptions } from 'crawlee';
 import { chromium } from 'playwright';
 
 import { closeClient, getConfigs, insertData } from "./mongoClient.js";
@@ -15,13 +15,16 @@ export async function runCrawler() {
     Configuration.getGlobalConfig().set('storageClientOptions', {
       localDataDirectory: '/tmp',
     });
+    Configuration.getGlobalConfig().set('systemInfoV2', true);
   }
 
-  const crawlerOptions: any = {
+  const crawlerOptions: PlaywrightCrawlerOptions = {
     requestHandler: router,
     maxRequestsPerCrawl: 1000,
     sameDomainDelaySecs: 1,
     maxRequestRetries: 1,
+    minConcurrency: 1,
+    maxConcurrency: 1,
   };
 
   // Configure browserless if URL is provided
@@ -31,6 +34,7 @@ export async function runCrawler() {
       : browserlessUrl;
 
     crawlerOptions.launchContext = {
+      // @ts-ignore -- PlaywrightCrawlerOptions type is not compatible with PlaywrightLauncherOptions
       launcher: async () => {
         return await chromium.connectOverCDP(wsEndpoint);
       },
