@@ -1,4 +1,8 @@
 import { PlaywrightCrawler } from 'crawlee';
+import { config } from 'dotenv';
+
+// Load environment variables from .env file
+config();
 
 import { closeClient, getConfigs, insertData } from "./mongoClient.js";
 import { getResult, router } from './routes.js';

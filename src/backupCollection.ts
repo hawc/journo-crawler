@@ -1,7 +1,11 @@
+import { config } from "dotenv";
 import { mkdir, writeFile } from "fs/promises";
 import { MongoClient, ServerApiVersion } from "mongodb";
 import { dirname } from "path";
 import { SiteData } from "./types.js";
+
+// Load environment variables from .env file
+config();
 
 const {
   MONGODB_URI,

@@ -1,5 +1,9 @@
+import { config } from "dotenv";
 import { MongoClient, ServerApiVersion } from "mongodb";
 import { SiteData } from "./types.js";
+
+// Load environment variables from .env file
+config();
 
 const {
   MONGODB_URI,
