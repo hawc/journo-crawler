@@ -7,7 +7,7 @@
    - At least 2GB RAM (4GB recommended)
    - SSH key authentication
 
-2. **SSH and run setup:**
+2. **SSH, clone repo, and run setup:**
    ```bash
    ssh root@your-server-ip
    cd /opt

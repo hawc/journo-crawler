@@ -3,13 +3,19 @@
 set -e
 
 # Configuration
-APP_DIR="/opt/journo-crawler"
+APP_DIR="$(pwd)"
 APP_USER="journo"
-NODE_VERSION="24"
+NODE_VERSION="20"
 
 # Check if running as root
 if [ "$EUID" -ne 0 ]; then 
     echo "Please run as root (use sudo)"
+    exit 1
+fi
+
+# Check if we're in a git repository
+if [ ! -d ".git" ]; then
+    echo "Error: This script must be run from within the cloned repository directory"
     exit 1
 fi
 
@@ -30,26 +36,8 @@ if ! id "$APP_USER" &>/dev/null; then
     adduser --disabled-password --gecos "" $APP_USER
 fi
 
-# Create application directory
-echo "Setting up application directory..."
-mkdir -p $APP_DIR
-
-# Clone repository if not already present
-if [ ! -d "$APP_DIR/.git" ]; then
-    read -p "Enter your git repository URL: " REPO_URL
-    if [ -n "$REPO_URL" ]; then
-        cd /opt
-        git clone $REPO_URL journo-crawler
-    else
-        echo "No repository URL provided. Please copy your files to $APP_DIR manually"
-        echo "Press Enter when ready to continue..."
-        read
-    fi
-fi
-
 # Install npm dependencies
 echo "Installing npm dependencies..."
-cd $APP_DIR
 npm install
 
 # Install Playwright system dependencies
@@ -57,14 +45,14 @@ echo "Installing Playwright system dependencies..."
 npx playwright install-deps
 
 # Set up environment file
-if [ ! -f "$APP_DIR/.env" ]; then
+if [ ! -f ".env" ]; then
     echo "Setting up environment configuration..."
     read -p "MongoDB URI: " MONGODB_URI
     read -p "MongoDB Database: " MONGODB_DATABASE
     read -p "MongoDB Collection: " MONGODB_COLLECTION
     read -p "MongoDB Configs Collection: " MONGODB_COLLECTION_CONFIGS
 
-    cat > $APP_DIR/.env << EOF
+    cat > .env << EOF
 MONGODB_URI=$MONGODB_URI
 MONGODB_DATABASE=$MONGODB_DATABASE
 MONGODB_COLLECTION=$MONGODB_COLLECTION
@@ -74,17 +62,16 @@ fi
 
 # Build the project
 echo "Building the project..."
-cd $APP_DIR
 npm run build
 
 # Set permissions
-chown -R $APP_USER:$APP_USER $APP_DIR
-chmod +x $APP_DIR/dist/*.js 2>/dev/null || true
+chown -R $APP_USER:$APP_USER "$APP_DIR"
+chmod +x dist/*.js 2>/dev/null || true
 
 # Make cron script executable
-if [ -f "$APP_DIR/scripts/cron-daily.sh" ]; then
-    chmod +x $APP_DIR/scripts/cron-daily.sh
-    chown $APP_USER:$APP_USER $APP_DIR/scripts/cron-daily.sh
+if [ -f "scripts/cron-daily.sh" ]; then
+    chmod +x scripts/cron-daily.sh
+    chown $APP_USER:$APP_USER scripts/cron-daily.sh
 fi
 
 # Create log directory
@@ -94,8 +81,8 @@ chmod 755 /var/log/journo-crawler
 
 echo "Setup complete!"
 echo "Application directory: $APP_DIR"
-echo "Test with: cd $APP_DIR && npm run start:prod"
+echo "Test with: npm run start:prod"
 echo ""
 echo "To set up daily cron job, run:"
 echo "  sudo crontab -u $APP_USER -e"
-echo "  Add: 0 2 * * * $APP_DIR/scripts/cron-daily.sh"
+echo "  Add: 0 2 * * * cd $APP_DIR && $APP_DIR/scripts/cron-daily.sh"
