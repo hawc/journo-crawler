@@ -170,8 +170,90 @@ Modify the `handleSite.ts` utility to add new content extraction logic or modify
 
 ## 📝 Scripts
 
+### Main Scripts
+
 - **`npm start`**: Start in development mode
 - **`npm run start:dev`**: Start with hot reload
 - **`npm run start:prod`**: Start production build
 - **`npm run build`**: Build TypeScript to JavaScript
 - **`npm test`**: Run tests (currently placeholder)
+
+### Maintenance Scripts
+
+#### Cleanup Old Entries
+
+Removes entries from the database that are older than a configured number of months (defaults to 3 months).
+
+```bash
+npm run cleanup
+```
+
+**Environment Variables:**
+- `MONTHS_TO_KEEP` (optional): Number of months to keep. Defaults to `3`.
+
+**Example:**
+```bash
+# Keep entries from the last 6 months
+MONTHS_TO_KEEP=6 npm run cleanup
+```
+
+**Usage Tip:** The cleanup script can be run daily together with the start script to always keep up-to-date data. For example, you can set up a cron job or scheduled task to run both:
+
+```bash
+npm start && npm run cleanup
+```
+
+#### Backup Collection
+
+Creates a local backup of the entire collection as a JSON file.
+
+```bash
+npm run backup
+```
+
+**Environment Variables:**
+- `BACKUP_FILE` (optional): Path to the backup file. Defaults to `./backups/collection-backup.json`.
+
+**Example:**
+```bash
+# Backup to a specific file with timestamp
+BACKUP_FILE=./backups/backup-$(date +%Y%m%d).json npm run backup
+```
+
+The backup file includes:
+- Timestamp of when the backup was created
+- Database and collection information
+- Document count
+- All documents in JSON format
+
+#### Restore Collection
+
+Restores the collection from a backup file.
+
+```bash
+npm run restore
+```
+
+**Environment Variables:**
+- `BACKUP_FILE` (optional): Path to the backup file to restore from. Defaults to `./backups/collection-backup.json`.
+- `RESTORE_MODE` (optional): Restoration mode. Options:
+  - `replace` (default): Deletes all existing documents and restores from backup
+  - `merge`: Only inserts documents that don't already exist (skips duplicates)
+
+**Examples:**
+```bash
+# Replace mode (default) - deletes all existing data first
+npm run restore
+
+# Merge mode - only adds new documents
+RESTORE_MODE=merge npm run restore
+
+# Restore from a specific backup file
+BACKUP_FILE=./backups/backup-20240101.json npm run restore
+```
+
+**Note:** The restore script automatically converts:
+- `_id` strings back to MongoDB `ObjectId` instances
+- Date strings back to `Date` objects
+
+This ensures data types are preserved correctly when restoring from backups.

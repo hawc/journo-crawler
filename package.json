@@ -19,6 +19,9 @@
     "start:dev": "tsx --env-file=.env src/main.ts",
     "build": "tsc",
     "test": "echo \"Error: oops, the actor has no tests yet, sad!\" && exit 1",
+    "cleanup": "tsx --env-file=.env src/cleanupOldEntries.ts",
+    "backup": "tsx --env-file=.env src/backupCollection.ts",
+    "restore": "tsx --env-file=.env src/restoreCollection.ts",
     "postinstall": "npx crawlee install-playwright-browsers"
   },
   "author": "Hendrik Wichern"
