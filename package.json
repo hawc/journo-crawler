@@ -10,7 +10,6 @@
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "@vercel/node": "^5.5.16",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   },
@@ -21,8 +20,11 @@
     "build": "tsc",
     "test": "echo \"Error: oops, the actor has no tests yet, sad!\" && exit 1",
     "cleanup": "tsx --env-file=.env src/cleanupOldEntries.ts",
+    "cleanup:prod": "node dist/cleanupOldEntries.js",
     "backup": "tsx --env-file=.env src/backupCollection.ts",
+    "backup:prod": "node dist/backupCollection.js",
     "restore": "tsx --env-file=.env src/restoreCollection.ts",
+    "restore:prod": "node dist/restoreCollection.js",
     "postinstall": "npx crawlee install-playwright-browsers"
   },
   "author": "Hendrik Wichern"
