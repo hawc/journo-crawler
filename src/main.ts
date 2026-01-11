@@ -1,15 +1,35 @@
 import { PlaywrightCrawler } from 'crawlee';
+import { chromium } from 'playwright';
 
 import { closeClient, getConfigs, insertData } from "./mongoClient.js";
 import { getResult, router } from './routes.js';
 
 export async function runCrawler() {
-  const crawler = new PlaywrightCrawler({
+  // Use browserless when configured (assumed when API is used on Vercel)
+  const browserlessUrl = process.env.BROWSERLESS_URL;
+  const browserlessToken = process.env.BROWSERLESS_TOKEN;
+
+  const crawlerOptions: any = {
     requestHandler: router,
     maxRequestsPerCrawl: 1000,
     sameDomainDelaySecs: 1,
     maxRequestRetries: 1,
-  });
+  };
+
+  // Configure browserless if URL is provided
+  if (browserlessUrl) {
+    const wsEndpoint = browserlessToken 
+      ? `${browserlessUrl}?token=${browserlessToken}`
+      : browserlessUrl;
+
+    crawlerOptions.launchContext = {
+      launcher: async () => {
+        return await chromium.connectOverCDP(wsEndpoint);
+      },
+    };
+  }
+
+  const crawler = new PlaywrightCrawler(crawlerOptions);
 
   const configs = await getConfigs();
 
