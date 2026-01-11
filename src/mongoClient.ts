@@ -1,8 +1,12 @@
+import { config } from "dotenv";
 import { MongoClient, ServerApiVersion } from "mongodb";
 import { SiteData, SitesConfig } from "./types.js";
 import { filterExistingItems } from "./utils/filterExistingItems.js";
 import { removeDuplicates } from "./utils/removeDuplicates.js";
 import { setId } from "./utils/setId.js";
+
+// Load environment variables from .env file
+config();
 
 const {
   MONGODB_URI,
