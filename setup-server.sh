@@ -5,7 +5,7 @@ set -e
 # Configuration
 APP_DIR="/opt/journo-crawler"
 APP_USER="journo"
-NODE_VERSION="20"
+NODE_VERSION="24"
 
 # Check if running as root
 if [ "$EUID" -ne 0 ]; then 
@@ -23,24 +23,6 @@ if ! command -v node &> /dev/null; then
     curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash -
     apt install -y nodejs
 fi
-
-# Install system dependencies for Playwright
-echo "Installing system dependencies..."
-apt install -y \
-    libnss3 \
-    libatk-bridge2.0-0 \
-    libdrm2 \
-    libxkbcommon0 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxrandr2 \
-    libgbm1 \
-    libasound2 \
-    libxss1 \
-    libgtk-3-0 \
-    fonts-liberation \
-    libappindicator3-1 \
-    xdg-utils
 
 # Create application user
 echo "Setting up application user..."
@@ -69,6 +51,10 @@ fi
 echo "Installing npm dependencies..."
 cd $APP_DIR
 npm install
+
+# Install Playwright system dependencies
+echo "Installing Playwright system dependencies..."
+npx playwright install-deps
 
 # Set up environment file
 if [ ! -f "$APP_DIR/.env" ]; then
