@@ -6,7 +6,7 @@
 set -e
 
 APP_DIR="/opt/journo-crawler"
-LOG_DIR="/var/log/journo-crawler"
+LOG_DIR="/home/journo/logs/journo-crawler"
 APP_USER="journo"
 
 # Ensure we're in the app directory
