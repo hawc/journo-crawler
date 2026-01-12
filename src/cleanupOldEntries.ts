@@ -9,7 +9,7 @@ const {
   MONGODB_URI,
   MONGODB_DATABASE,
   MONGODB_COLLECTION,
-  MONTHS_TO_KEEP = "3",
+  MONTHS_TO_KEEP = "1",
 } = process.env;
 
 if (!MONGODB_URI) {
@@ -34,7 +34,7 @@ export async function cleanupOldEntries() {
     throw new Error("MongoDB database or collection not specified.");
   }
 
-  const monthsToKeep = parseInt(MONTHS_TO_KEEP || "3", 10);
+  const monthsToKeep = parseInt(MONTHS_TO_KEEP || "1", 10);
   if (isNaN(monthsToKeep) || monthsToKeep < 0) {
     throw new Error("MONTHS_TO_KEEP must be a valid non-negative number.");
   }
